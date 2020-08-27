@@ -1,0 +1,1 @@
+sudo /usr/local/cuda/bin/nvprof --unified-memory-profiling per-process-device /home/dcslab/hrchung/benchmark/rodinia_3.1/cuda/bfs_UM_ysnam/bfs /home/dcslab/hrchung/benchmark/rodinia_3.1/data/bfs/inputGen/graph20M.txt

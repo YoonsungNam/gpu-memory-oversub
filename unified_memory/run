@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e
+
+mkdir -p log
+mkdir -p exe
+
+
+files=($(ls *.cu))
+
+for file in ${files[@]};
+do 
+    fname=${file%.cu}
+    echo ${fname}
+    /usr/local/cuda-10.1/bin/nvcc -o exe/${fname} ${fname}.cu
+    #/usr/local/cuda-10.1/bin/nvprof --log-file log/${fname}.log --metrics gst_throughput --metrics gld_throughput --metrics ipc --metrics local_load_transaction  exe/${fname} > log/${fname}.info
+    /usr/local/cuda-10.1/bin/nvprof unified-memory-profiling per-process-device print-gpu-trace --log-file log/${fname}.time  exe/${fname}
+done

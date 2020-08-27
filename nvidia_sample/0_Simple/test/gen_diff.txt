@@ -1,0 +1,48 @@
+1,6d0
+< /* 
+< *
+< * header of generated code 
+< * 
+< */ 
+< # include <stdint.h>
+47,54d40
+< #define WARP_SZ 32
+< __device__ inline int lane_id (void) { return threadIdx.x % WARP_SZ; }
+< static __device__ __inline__ uint64_t get_smid(void) { 
+< 		uint32_t ret;
+< 		asm volatile("mov.u32 %0, %%smid;" : "=r"(ret) );
+< 		return ret; 
+<  }
+< 
+56,75d41
+< 		int th_idx = threadIdx.x+blockDim.x*blockIdx.x;
+< 
+< 		__shared__ uint64_t id, valid_task;
+< 		uint64_t smid;
+< 
+< // There is 30 SMs in TITAN XP ( Each MP has 128 CUDA Cores, 4 WARPS)
+< 		uint64_t sm_low = 0;
+< 		uint64_t sm_high = 14; 
+< 		const int leader = ( ! threadIdx.x && ! threadIdx.y && ! threadIdx.z ); 
+< 
+< 		if (leader) {
+< 			id = 0;
+< 			smid = get_smid();
+< 			valid_task = (sm_low <= smid && smid <= sm_high); 
+< 		}
+< 
+< 		__syncthreads(); 
+< 		if (!valid_task) {return;} 
+< 
+< 
+< /*
+< [HOST]
+< --- function:             MatrixMulCUDA
+< --- dimensions:  grid	 threads >>>(d_C	 d_A	 d_B	 dimsA.x	 dimsB.x);	 grid	 threads >>>(d_C	 d_A	 d_B	 dimsA.x	 dimsB.x);	 grid	 threads >>>(d_C	 d_A	 d_B	  dimsA.x	 dimsB.x);	 grid	 threads >>>(d_C	 d_A	 d_B	  dimsA.x	 dimsB.x);	
+< --- arguments:	d_C	 d_A	 d_B	 dimsA.x	 dimsB.x	d_C	 d_A	 d_B	 dimsA.x	 dimsB.x	d_C	 d_A	 d_B	  dimsA.x	 dimsB.x	d_C	 d_A	 d_B	  dimsA.x	 dimsB.x
+< 
+< [KERNEL]
+< --- space: SIZE> __global__ void MatrixMulCUDA(float *C, float *A,   float *B, int wA, int wB) {
+< --- function: B, int wA, int wB) {
+< --- arguments:	[ 'float *' , 'C ']	[ ' float *' , 'A ']	[ '   float *' , 'B ']	[ ' ' , 'int wA ']	[ ' ' , 'int wB ']
+< */
